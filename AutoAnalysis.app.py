@@ -1,8 +1,15 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
+
+# Check for required packages
+try:
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+    visualization_available = True
+except ImportError:
+    visualization_available = False
+    st.warning("Visualization libraries not found. Plots will be disabled.")
 
 # Set page configuration
 st.set_page_config(page_title="Car Price Analysis", layout="wide")
@@ -10,6 +17,10 @@ st.set_page_config(page_title="Car Price Analysis", layout="wide")
 # Title
 st.title("Car Price Analysis")
 st.write("**What are the main characteristics that have the most impact on the car price?**")
+
+# Load data (moved to top so it's available everywhere)
+path = 'https://raw.githubusercontent.com/klamsal/Fall2024Exam/refs/heads/main/CleanedAutomobile.csv'
+df = pd.read_csv(path)
 
 # Sidebar for navigation
 st.sidebar.title("Table of Contents")
@@ -25,10 +36,6 @@ if selected_section == "Import Data":
     # Setup
     st.subheader("Setup")
     st.write("Import libraries and load the data.")
-    
-    # Load data
-    path = 'https://raw.githubusercontent.com/klamsal/Fall2024Exam/refs/heads/main/CleanedAutomobile.csv'
-    df = pd.read_csv(path)
     
     st.write("First 5 rows of the dataset:")
     st.dataframe(df.head())
@@ -71,12 +78,15 @@ elif selected_section == "Feature Patterns Visualization":
     st.dataframe(df[['bore', 'stroke', 'compression-ratio', 'horsepower']].corr())
     
     # Positive Linear Relationship Visualization
-    st.subheader("Positive Linear Relationship Example")
-    st.write("Scatterplot of 'engine-size' and 'price' showing a positive linear relationship.")
-    
-    fig, ax = plt.subplots(figsize=(10, 6))
-    sns.regplot(x='engine-size', y='price', data=df, ax=ax)
-    st.pyplot(fig)
+    if visualization_available:
+        st.subheader("Positive Linear Relationship Example")
+        st.write("Scatterplot of 'engine-size' and 'price' showing a positive linear relationship.")
+        
+        fig, ax = plt.subplots(figsize=(10, 6))
+        sns.regplot(x='engine-size', y='price', data=df, ax=ax)
+        st.pyplot(fig)
+    else:
+        st.warning("Visualizations disabled - required packages not installed.")
 
 # Section 3: Descriptive Statistics
 elif selected_section == "Descriptive Statistics":
@@ -120,11 +130,14 @@ elif selected_section == "Correlation and Causation":
     """)
     
     # Correlation heatmap
-    st.subheader("Correlation Heatmap")
-    numeric_df = df.select_dtypes(include=['int64', 'float64'])
-    fig, ax = plt.subplots(figsize=(12, 10))
-    sns.heatmap(numeric_df.corr(), annot=True, cmap='coolwarm', ax=ax)
-    st.pyplot(fig)
+    if visualization_available:
+        st.subheader("Correlation Heatmap")
+        numeric_df = df.select_dtypes(include=['int64', 'float64'])
+        fig, ax = plt.subplots(figsize=(12, 10))
+        sns.heatmap(numeric_df.corr(), annot=True, cmap='coolwarm', ax=ax)
+        st.pyplot(fig)
+    else:
+        st.warning("Visualizations disabled - required packages not installed.")
 
 # Add some styling
 st.markdown("""
