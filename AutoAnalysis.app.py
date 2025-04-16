@@ -1,4 +1,7 @@
+# Set page configuration - MUST BE FIRST STREAMLIT COMMAND
 import streamlit as st
+st.set_page_config(page_title="Car Price Analysis", layout="wide")
+
 import pandas as pd
 import numpy as np
 
@@ -11,14 +14,11 @@ except ImportError:
     visualization_available = False
     st.warning("Visualization libraries not found. Plots will be disabled.")
 
-# Set page configuration
-st.set_page_config(page_title="Car Price Analysis", layout="wide")
-
 # Title
 st.title("Car Price Analysis")
 st.write("**What are the main characteristics that have the most impact on the car price?**")
 
-# Load data (moved to top so it's available everywhere)
+# Load data
 path = 'https://raw.githubusercontent.com/klamsal/Fall2024Exam/refs/heads/main/CleanedAutomobile.csv'
 df = pd.read_csv(path)
 
